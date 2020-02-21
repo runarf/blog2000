@@ -1,0 +1,171 @@
+---
+title: "Asynchronous programming in Kotlin vs in Javascript"
+date: "2017-08-10"
+---
+
+# Lets compare a program doing the same thing in two different programming languages, Javascript and Kotlin.
+
+First we need to import dependencies:
+
+<CodeBlock className="javascript">
+  {`const axios = require("axios")`}
+</CodeBlock>
+
+<CodeBlock className="kotlin">
+{`
+import io.ktor.client.HttpClient
+import io.ktor.client.features.json.JsonFeature
+import io.ktor.client.request.get
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+ 
+val client: HttpClient = HttpClient() {
+    install(JsonFeature)
+}
+`}
+</CodeBlock>
+
+Then we create a main function:
+
+<CodeBlock className="javascript">
+{`
+const main = async () => {
+  await displayPokemonsParallell()
+  await displayPokemonsSequential()
+}
+`}
+</CodeBlock>
+
+<CodeBlock className="kotlin">
+{`
+fun main(args: Array<String>): Unit = runBlocking<Unit> {
+    displayPokemonsParallell()
+    displayPokemonsSequential()
+}
+`}
+</CodeBlock>
+
+First well look at getting the pokemons sequentially.
+
+<CodeBlock className="javascript">
+  {`
+const displayPokemonsSequential = async () => {
+  const firstPokemon = await axios.get("https://pokeapi.co/api/v2/pokemon/ditto/")
+  const secondPokemon = await axios.get("https://pokeapi.co/api/v2/pokemon/1/")
+ 
+  console.log(firstPokemon.data.name)
+  console.log(secondPokemon.data.name)
+}
+`}
+</CodeBlock>
+
+<CodeBlock className="kotlin">
+{`
+data class Pokemon(val name: String)
+ 
+suspend fun displayPokemonsSequential(): Unit = coroutineScope<Unit> {
+ 
+    val firstPokemon: Pokemon = client.get<Pokemon>("https://pokeapi.co/api/v2/pokemon/ditto/")
+    val secondPokemon: Pokemon = client.get<Pokemon>("https://pokeapi.co/api/v2/pokemon/1/")
+      
+    println(firstPokemon)
+    println(secondPokemon)
+}
+`}
+</CodeBlock>
+
+Then in parallell
+
+<CodeBlock className="javascript">
+{`
+const displayPokemonsParallell = async () => {
+  const firstPokemonPromise = axios.get("https://pokeapi.co/api/v2/pokemon/ditto/")
+  const secondPokemonPromise = axios.get("https://pokeapi.co/api/v2/pokemon/1/")
+ 
+  const firstPokemon = await firstPokemonPromise
+  const secondPokemon = await secondPokemonPromise
+ 
+  console.log(firstPokemon.data.name)
+  console.log(secondPokemon.data.name)
+}
+`}
+</CodeBlock>
+
+<CodeBlock className="kotlin">
+{`
+suspend fun displayPokemonsParallell(): Unit = coroutineScope<Unit> {
+      val firstDeferredPokemon: Deferred<Pokemon> = async { client.get<Pokemon>("https://pokeapi.co/api/v2/pokemon/ditto/") }
+      val secondDeferredPokemon: Deferred<Pokemon> = async { client.get<Pokemon>("https://pokeapi.co/api/v2/pokemon/1/") }
+ 
+      val firstPokemon: Pokemon = firstDeferredPokemon.await()
+      val secondPokemon: Pokemon = secondDeferredPokemon.await()
+ 
+      println(firstPokemon)
+      println(secondPokemon)
+  }
+`}
+</CodeBlock>
+
+<table>
+  <tr>
+    <th></th>
+    <th>Javascript</th>
+    <th>Kotlin</th>
+  </tr>
+  <tr>
+    <td>Mark a function as asynchronous</td>
+    <td>
+      <CodeBlock className="javascript">{`const displayPokemons = async () => {}`}</CodeBlock>
+    </td>
+    <td>
+      <CodeBlock className="kotlin">
+        {`suspend fun displayPokemons(): Unit = coroutineScope {}`}
+      </CodeBlock>
+    </td>
+  </tr>
+  <tr>
+    <td>Get pokemons sequantially</td>
+    <td><CodeBlock className="javascript">
+      {`
+        const firstPokemon = await axios.get("https://pokeapi.co/api/v2/pokemon/ditto/")
+        const secondPokemon = await axios.get("https://pokeapi.co/api/v2/pokemon/1/")
+      `.replace(/^ +/gm, '')}
+      </CodeBlock>
+      </td>
+    <td>
+      <CodeBlock className="kotlin">
+      {`
+        val firstPokemon: Pokemon = client.get<Pokemon>("https://pokeapi.co/api/v2/pokemon/ditto/")
+        val secondPokemon: Pokemon = client.get<Pokemon>("https://pokeapi.co/api/v2/pokemon/1/")
+      `.replace(/^ +/gm, '')}
+      </CodeBlock>
+    </td>
+  </tr>
+  <tr>
+    <td>Get pokemons in parallell</td>
+    <td> 
+    <CodeBlock className="javascript">
+{`
+const firstPokemonPromise = axios.get("https://pokeapi.co/api/v2/pokemon/ditto/")
+const secondPokemonPromise = axios.get("https://pokeapi.co/api/v2/pokemon/1/")
+ 
+const firstPokemon = await firstPokemonPromise
+const secondPokemon = await secondPokemonPromise
+`}
+    </CodeBlock>
+    </td>
+    <td><CodeBlock className="kotlin">
+{`
+val firstDeferredPokemon: Deferred<Pokemon> = async { client.get<Pokemon>("https://pokeapi.co/api/v2/pokemon/ditto/") }
+val secondDeferredPokemon: Deferred<Pokemon> = async { client.get<Pokemon>("https://pokeapi.co/api/v2/pokemon/1/") }
+ 
+val firstPokemon: Pokemon = firstDeferredPokemon.await()
+val secondPokemon: Pokemon = secondDeferredPokemon.await()
+`}      
+       </CodeBlock> </td>
+  </tr>
+</table>
+
+Doing asynchronous programming in Javascript and Kotlin is similar but also different. The biggest difference is that Javascript by default continues the program when doing an asyncronous call. Kotlin stops when doing an asynchronous call.
