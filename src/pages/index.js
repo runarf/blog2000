@@ -6,7 +6,7 @@ const BlogIndex = ({ data }) => {
 
   return (
     <div>
-      <h1>Awesome yo </h1>
+      <h1>Runars blog </h1>
       <ul>
         {posts.map(({ node: post }) => (
           <li key={post.id}>
