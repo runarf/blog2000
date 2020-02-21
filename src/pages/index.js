@@ -3,12 +3,15 @@ import { Link, graphql } from "gatsby"
 
 const BlogIndex = ({ data }) => {
   const { edges: posts } = data.allMdx
+  const { edges: mdPosts } = data.allMarkdownRemark
+  console.log("mdPosts", mdPosts)
+  const allPosts = [...posts, ...mdPosts]
 
   return (
     <div>
       <h1>Runars blog </h1>
       <ul>
-        {posts.map(({ node: post }) => (
+        {allPosts.map(({ node: post }) => (
           <li key={post.id}>
             <Link to={post.fields.slug}>
               <h2>{post.frontmatter.title}</h2>
@@ -25,19 +28,33 @@ export default BlogIndex
 
 export const pageQuery = graphql`
   query blogIndex {
-    allMdx {
-      edges {
-        node {
-          id
-          excerpt
-          frontmatter {
-            title
-          }
-          fields {
-            slug
-          }
+  allMdx {
+    edges {
+      node {
+        id
+        excerpt
+        frontmatter {
+          title
+        }
+        fields {
+          slug
         }
       }
     }
   }
+  allMarkdownRemark {
+    edges {
+      node {
+        id
+        excerpt
+        frontmatter {
+          title
+        }
+        fields {
+          slug
+        }
+      }
+    }
+  }
+}
 `
