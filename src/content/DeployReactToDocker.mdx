@@ -1,0 +1,131 @@
+---
+title: "Run a 'create react app' app from docker"
+date: "2020-03-04"
+---
+
+This tutorial is divided in two parts. The first part we will just set up everything to get the app running in docker. In the second part we will look closer into what we did in part 1.
+
+# Part 1
+
+First make sure to have the following installed:
+- https://nodejs.org/en/
+- https://www.docker.com/
+
+In a terminal run the following commands:
+
+<CodeBlock className="bash">
+{`
+$ npx create-react-app InsertYourAppNameHere
+$ cd InsertYourAppNameHere
+$ npm run build
+`}
+</CodeBlock>
+
+You now have a react app in the ./build directory
+
+Lets put this react app in a docker container by creating a Dockerfile in the same folder:
+
+<CodeBlock className="bash">
+{`
+$ touch Dockerfile
+`}
+</CodeBlock>
+
+In this file paste the following content:
+
+<CodeBlock className="docker">
+{`
+FROM nginx:alpine
+COPY /build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+`}
+</CodeBlock>
+
+You can now run the following commands in the terminal to build and run the docker container:
+
+<CodeBlock className="bash"> 
+{`
+$ docker build . -t react-docker
+$ docker run -p 8000:80 react-docker
+`}
+</CodeBlock>
+
+You can now visit the url <http://localhost:8000/>
+
+Congratulation, you have deployed your react app inside a docker container!
+
+Instead of having to run the previous commands every time you want to build and run the docker container, you can use docker-compose. docker-compose has to be installed, and can be found here: https://docs.docker.com/compose/
+
+In the same directory create a new file by running this command:
+
+<CodeBlock className="bash">
+{`
+$ touch docker-compose.yaml
+`}
+</CodeBlock>
+
+In this file paste the following content:
+
+<CodeBlock className="yaml">
+{`
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+      - "80:80"
+`}
+</CodeBlock>
+
+Now you can run this command to both build and run the docker container:
+<CodeBlock className="bash">
+{`
+$ docker-compose up
+`}
+</CodeBlock>
+
+# Part 2
+
+We created and built the react app and the dockerfile with the following contents:
+
+<CodeBlock className="docker">
+{`
+FROM nginx:alpine
+COPY /build /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+`}
+</CodeBlock>
+
+Lets look into the different parts of the dockerfile:
+
+<CodeBlock>FROM nginx:alpine</CodeBlock>
+
+This part tells docker to use the image `nginx:alpine` that is available from the docker hub. https://hub.docker.com/_/nginx. This is the base for our docker container. It is a linux operating system that includes nginx that is used to serve our react app.
+
+<CodeBlock>COPY /build /usr/share/nginx/html</CodeBlock>
+
+We copy the react app we built into the docker container. We copy it to the location nginx will look for an `index.html` file to serve. When we start the docker container, nginx will look for the `index.html` in this location and serve it.
+
+<CodeBlock>EXPOSE 80</CodeBlock>
+
+We need to specify on which port the nginx will serve our app. The port can be any number, but convention is to use port 80.
+
+<CodeBlock>CMD ["nginx", "-g", "daemon off;"]</CodeBlock>
+
+There is a lot of magic going on. One of those magics is that nginx will serve the `index.html` but then shut down right after. The command above prevents nginx from shutting down.
+
+
+
+<CodeBlock className="docker">a</CodeBlock>
+
+
+https://hackernoon.com/so-you-want-to-dockerize-your-react-app-64fbbb74c217
+https://mherman.org/blog/dockerizing-a-react-app/
+
+<CodeBlock className="">
+{`
+ 
+`}
+</CodeBlock>

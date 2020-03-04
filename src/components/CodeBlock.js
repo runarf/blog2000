@@ -1,11 +1,15 @@
 import React from "react"
 import Highlight, { defaultProps } from "prism-react-renderer"
 import kotlinLang from "refractor/lang/kotlin"
+import dockerLang from "refractor/lang/docker"
+import nginxLang from "refractor/lang/nginx"
 import Prism from "prism-react-renderer/prism"
 import theme from "prism-react-renderer/themes/github"
 import { css } from "@emotion/core"
 
 kotlinLang(Prism)
+dockerLang(Prism)
+nginxLang(Prism)
 
 const CodeBlock = ({ children, className }) => {
   const language = className ? className.replace(/language-/, "") : ""
