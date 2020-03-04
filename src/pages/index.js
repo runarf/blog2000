@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, graphql } from "gatsby"
+import {css} from '@emotion/core'
 
 const BlogIndex = ({ data }) => {
   const { edges: posts } = data.allMdx
@@ -8,18 +9,21 @@ const BlogIndex = ({ data }) => {
   const allPosts = [...posts, ...mdPosts]
 
   return (
-    <div>
+    <div css={css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: flex-end;
+    `}>
       <h1>Runars blog </h1>
-      <ul>
         {allPosts.map(({ node: post }) => (
-          <li key={post.id}>
+          <div key={post.id}>
             <Link to={post.fields.slug}>
               <h2>{post.frontmatter.title}</h2>
             </Link>
             <p>{post.excerpt}</p>
-          </li>
+          </div>
         ))}
-      </ul>
     </div>
   )
 }
@@ -28,7 +32,7 @@ export default BlogIndex
 
 export const pageQuery = graphql`
   query blogIndex {
-  allMdx {
+  allMdx(sort: { order: DESC, fields: frontmatter___date }) {
     edges {
       node {
         id
