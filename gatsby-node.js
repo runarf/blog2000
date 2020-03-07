@@ -77,7 +77,7 @@ async function getMdxPages(graphql, reporter) {
   return result.data.allMdx.edges
 }
 
-const getMdPages = async (createPage, graphql) => {
+const getMdPages = async graphql => {
   const result = await graphql(`
     query {
       allMarkdownRemark {
