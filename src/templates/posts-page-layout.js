@@ -1,19 +1,31 @@
-import React from 'react'
-import { graphql } from 'gatsby'
-import { MDXProvider } from '@mdx-js/react'
+import React from "react"
+import { graphql } from "gatsby"
+import { MDXProvider } from "@mdx-js/react"
 import { MDXRenderer } from "gatsby-plugin-mdx"
-import { Link } from 'gatsby'
+import { Link } from "gatsby"
 import CodeBlock from "../components/CodeBlock"
-
+import { css } from "@emotion/core"
 const shortcodes = { Link, CodeBlock }
 
 const PageTemplate = ({ data: { mdx } }) => {
-
   return (
-    <div>
-      <h1>{mdx.frontmatter.title}</h1>
+    <div
+      css={css`
+        display: flex;
+        flex-direction: column;
+        padding: 200px;
+        background-color: black;
+      `}
+    >
       <MDXProvider components={shortcodes}>
-        <MDXRenderer>{mdx.body}</MDXRenderer>
+        <div
+          css={css`
+            background-color: white;
+          `}
+        >
+          <h1>{mdx.frontmatter.title}</h1>
+          <MDXRenderer>{mdx.body}</MDXRenderer>
+        </div>
       </MDXProvider>
     </div>
   )
