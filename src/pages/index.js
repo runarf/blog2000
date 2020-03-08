@@ -3,12 +3,16 @@ import { Link, graphql } from "gatsby"
 import { css } from "@emotion/core"
 import { groupBy } from "lodash"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import * as Awesome from "@fortawesome/free-brands-svg-icons"
+import {
+  faLinkedin,
+  faTwitter,
+  faGithub,
+} from "@fortawesome/free-brands-svg-icons"
 
 const BlogIndex = ({ data }) => {
   const { edges: posts } = data.allMdx
   const { edges: mdPosts } = data.allMarkdownRemark
-  console.log("mdPosts", mdPosts)
+
   const allPosts = [...posts, ...mdPosts]
 
   const groupedPosts = groupBy(
@@ -30,45 +34,54 @@ const Header = () => (
     css={css`
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
+      background-color: pink;
     `}
   >
     <div></div>
-    <h1
-      css={css`
-        justify-self: center;
-      `}
+    <PageTitle />
+    <SocialIcons />
+  </div>
+)
+
+const PageTitle = () => (
+  <h1
+    css={css`
+      justify-self: center;
+    `}
+  >
+    Runars homepage
+  </h1>
+)
+
+const SocialIcons = () => (
+  <div
+    css={css`
+      display: flex;
+      /* align-items: flex-end; */
+      border: 1px dotted black;
+    `}
+  >
+    <a
+      target="_blank"
+      rel="noopener noreferrer"
+      href="https://www.linkedin.com/in/runarf/"
     >
-      Runars homepage
-    </h1>
-    <div
-      css={css`
-        display: flex;
-        align-items: flex-end;
-        justify-content: flex-end;
-      `}
+      <FontAwesomeIcon icon={faLinkedin} />
+    </a>
+    <a
+      target="_blank"
+      rel="noopener noreferrer"
+      href="https://twitter.com/Runfl"
     >
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://www.linkedin.com/in/runarf/"
-      >
-        <FontAwesomeIcon icon={Awesome.faLinkedin} />
-      </a>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://twitter.com/Runfl"
-      >
-        <FontAwesomeIcon icon={Awesome.faTwitter} />
-      </a>
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href="https://github.com/runarf?tab=repositories"
-      >
-        <FontAwesomeIcon icon={Awesome.faGithub} />
-      </a>
-    </div>
+      <FontAwesomeIcon icon={faTwitter} />
+    </a>
+    <a
+      target="_blank"
+      rel="noopener noreferrer"
+      href="https://github.com/runarf?tab=repositories"
+    >
+      <FontAwesomeIcon icon={faGithub} />
+    </a>
   </div>
 )
 
@@ -80,16 +93,26 @@ const Contents = ({ groupedPosts }) => (
     `}
   >
     <Content
+      css={css`
+        background-color: beige;
+      `}
       posts={[...groupedPosts["blog"], ...groupedPosts["personal"]]}
       title="Blog"
     />
 
-    <Content posts={groupedPosts["project"]} title="Projects" />
+    <Content
+      css={css`
+        background-color: lightgoldenrodyellow;
+      `}
+      posts={groupedPosts["project"]}
+      title="Projects"
+    />
   </div>
 )
 
-const Content = ({ posts, title }) => (
+const Content = ({ posts, title, ...otherProps }) => (
   <div
+    {...otherProps}
     css={css`
       display: flex;
       flex-direction: column;
