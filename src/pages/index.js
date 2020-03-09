@@ -89,7 +89,7 @@ const Contents = ({ groupedPosts }) => (
   <div
     css={css`
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
     `}
   >
     <Content
