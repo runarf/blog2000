@@ -13,7 +13,7 @@ const PageTemplate = ({ data: { mdx } }) => {
       css={css`
         display: flex;
         flex-direction: column;
-        padding: 200px;
+        padding: 12px;
       `}
     >
       <MDXProvider components={shortcodes}>
