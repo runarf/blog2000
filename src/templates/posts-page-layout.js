@@ -14,15 +14,10 @@ const PageTemplate = ({ data: { mdx } }) => {
         display: flex;
         flex-direction: column;
         padding: 200px;
-        background-color: black;
       `}
     >
       <MDXProvider components={shortcodes}>
-        <div
-          css={css`
-            background-color: white;
-          `}
-        >
+        <div>
           <h1>{mdx.frontmatter.title}</h1>
           <MDXRenderer>{mdx.body}</MDXRenderer>
         </div>
