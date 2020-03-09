@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { Link, graphql } from "gatsby"
 import { css } from "@emotion/core"
 import { groupBy } from "lodash"
@@ -8,10 +8,35 @@ import {
   faTwitter,
   faGithub,
 } from "@fortawesome/free-brands-svg-icons"
+import distorted from "./distorted.gif"
 
 const BlogIndex = ({ data }) => {
+  const [loading, setLoading] = useState(true)
   const { edges: posts } = data.allMdx
   const { edges: mdPosts } = data.allMarkdownRemark
+
+  useEffect(() => {
+    const fakeLoading = async () => {
+      setTimeout(() => {
+        setLoading(false)
+      }, 2000)
+    }
+    fakeLoading()
+  })
+
+  if (loading)
+    return (
+      <div
+        css={css`
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        `}
+      >
+        <img src={distorted} />
+      </div>
+    )
 
   const allPosts = [...posts, ...mdPosts]
 
