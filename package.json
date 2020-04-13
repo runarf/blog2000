@@ -18,7 +18,7 @@
     "gatsby-plugin-manifest": "^2.2.39",
     "gatsby-plugin-mdx": "^1.1.7",
     "gatsby-source-filesystem": "^2.2.2",
-    "gatsby-transformer-remark": "^2.6.52",
+    "gatsby-transformer-remark": "^2.7.1",
     "lodash": "^4.17.15",
     "prism-react-renderer": "^1.0.2",
     "prismjs": "^1.19.0",
